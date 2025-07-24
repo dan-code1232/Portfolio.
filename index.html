@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+  <style>
+    :root {
+      --bgDark: #181a23;
+      --bgDarker: #10111a;
+      --surface: #23243a;
+      --primary: #4f46e5;
+      --primaryLight: #6366f1;
+      --secondary: #fbbf24;
+      --accent: #ff6a3e;
+      --white: #f4faff;
+      --textMain: #f4faff;
+      --textMuted: #b3b8c5;
+      --sidebarBg: #181a23;
+      --sidebarActive: #4f46e5;
+      --sidebarHover: #23243a;
+    }
+    *, *:before, *:after { box-sizing: border-box; }
+    html {
+      background: var(--bgDark);
+      color: var(--textMain);
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      scroll-behavior: smooth;
+      scroll-snap-type: y mandatory;
+      overflow-x: hidden;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    .section {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 4rem 1rem;
+      scroll-snap-align: start;
+      position: relative;
+      background: var(--bgDark);
+    }
+    #sidebar {
+      background: var(--sidebarBg);
+      height: 100%;
+      left: -260px;
+      padding: 2rem 1rem;
+      position: fixed;
+      top: 0;
+      transition: left 0.3s cubic-bezier(.77,0,.175,1);
+      width: 260px;
+      z-index: 10000;
+      box-shadow: 2px 0 20px rgba(44, 62, 80, 0.15);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    #sidebar.open { left: 0; }
+    #sidebar a {
+      color: var(--textMain);
+      display: block;
+      font-size: 1.2rem;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      margin: 0.2rem 0;
+      transition: background 0.2s, color 0.2s, padding 0.2s;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    #sidebar a.active, #sidebar a:hover {
+      background: var(--sidebarActive);
+      color: var(--secondary);
+      padding-left: 2rem;
+    }
+    #sidebar .sidebar-title {
+      color: var(--secondary);
+      font-size: 1.5rem;
+      font-weight: 900;
+      margin-bottom: 2rem;
+      text-align: center;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    #hamburger {
+      color: var(--primary);
+      cursor: pointer;
+      font-size: 2.2rem;
+      left: 20px;
+      position: fixed;
+      top: 20px;
+      z-index: 10001;
+      background: var(--surface);
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+      border: 2px solid var(--primaryLight);
+      transition: background 0.2s, color 0.2s;
+    }
+    #hamburger.open {
+      color: var(--secondary);
+      background: var(--primary);
+      transform: rotate(90deg);
+    }
+    .section h2 {
+      color: var(--primaryLight);
+      font-size: 2.8rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      letter-spacing: 1px;
+      font-weight: 900;
+      text-shadow: 0 2px 12px #0004;
+    }
+    .section p {
+      font-size: 1.25rem;
+      margin: auto;
+      max-width: 800px;
+      text-align: center;
+      color: var(--white);
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      text-shadow: 0 2px 8px #0008;
+    }
+    #hero-1785 {
+      background: linear-gradient(120deg, var(--bgDarker) 0%, var(--surface) 100%);
+      color: var(--textMain);
+      position: relative;
+      overflow: hidden;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #hero-1785 .cs-container {
+      margin: auto;
+      max-width: 70rem;
+      position: relative;
+      text-align: center;
+      z-index: 2;
+      padding-top: 5vh;
+    }
+    .auto-typed {
+      font-size: 2.2rem;
+      font-weight: 900;
+      display: block;
+      margin-top: 1.5rem;
+      color: var(--secondary);
+      letter-spacing: 1.5px;
+      text-shadow: 0 2px 12px #0004;
+    }
+    .canvas-wrapper {
+      height: 100%;
+      left: 0;
+      overflow: hidden;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      z-index: 0;
+    }
+    canvas {
+      display: block;
+      height: 100%;
+      width: 100%;
+      pointer-events: none;
+    }
+    .hero-title {
+      font-size: 3.4rem;
+      font-weight: 900;
+      color: var(--white);
+      margin: 2rem 0 0.5rem;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 12px #0006;
+    }
+    .hero-desc {
+      color: var(--white);
+      margin-top: 1.5rem;
+      font-size: 1.3rem;
+      font-weight: 500;
+      text-shadow: 0 2px 12px #0004;
+    }
+    #About {
+      background: linear-gradient(120deg, var(--surface) 0%, var(--bgDark) 100%);
+      color: var(--textMain);
+    }
+    .about-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .about-bg svg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .card-container {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 2rem 1rem;
+      position: relative;
+      z-index: 2;
+      gap: 2rem;
+    }
+    .card {
+      color: var(--white);
+      height: 220px;
+      position: relative;
+      width: 350px;
+      margin: 0 1rem;
+      background: linear-gradient(120deg, var(--primary) 0%, var(--primaryLight) 100%);
+      border-radius: 12px;
+      box-shadow: 0 4px 32px #0005;
+      perspective: 1000px;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(.77,0,.175,1);
+    }
+    .card:hover { transform: rotateY(180deg); }
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0; left: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      backface-visibility: hidden;
+      border-radius: 12px;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--white);
+      text-shadow: 0 2px 8px #0008;
+    }
+    .card-back {
+      transform: rotateY(180deg);
+    }
+    .img-area {
+      background-color: #232946;
+      border-radius: 50%;
+      height: 100px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      width: 100px;
+      border: 3px solid var(--secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .inner-area {
+      height: 100%;
+      width: 100%;
+    }
+    .name {
+      background-image: linear-gradient(var(--secondary), var(--accent));
+      color: transparent;
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-bottom: 10px;
+      -webkit-background-clip: text;
+    }
+    .about, .back-content p {
+      background: linear-gradient(to right, var(--secondary), var(--accent));
+      color: transparent;
+      margin-bottom: 20px;
+      text-align: center;
+      -webkit-background-clip: text;
+      white-space: pre-line;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .carousel {
+      background: transparent;
+      margin: 2rem auto;
+      max-width: 900px;
+      width: 90%;
+    }
+    .carousel-cell {
+      background: var(--surface);
+      border-radius: 1rem;
+      box-shadow: 0 8px 25px #0003;
+      color: var(--white);
+      margin-right: 20px;
+      padding: 3rem 2rem;
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+      width: 80vw;
+      font-weight: 600;
+      font-size: 1.2rem;
+      border: 2px solid transparent;
+    }
+    .carousel-cell:hover {
+      box-shadow: 0 12px 35px #0005;
+      transform: translateY(-5px) scale(1.03);
+      border: 2px solid var(--secondary);
+    }
+    #Skills {
+      background: linear-gradient(120deg, var(--bgDark) 0%, var(--surface) 100%);
+    }
+    .skills-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .skill-item {
+      background: var(--primaryLight);
+      color: var(--bgDarker);
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      box-shadow: 0 2px 8px #0002;
+      transition: background 0.2s, color 0.2s;
+      letter-spacing: 1px;
+    }
+    .skill-item:hover {
+      background: var(--secondary);
+      color: var(--primary);
+    }
+    #Certificates {
+      background: linear-gradient(120deg, var(--surface) 0%, var(--bgDarker) 100%);
+      color: var(--white);
+      position: relative;
+    }
+    .cert-carousel {
+      margin: 2rem auto;
+      max-width: 800px;
+      width: 100%;
+      perspective: 1200px;
+    }
+    .cert-cell {
+      background: var(--bgDark);
+      border-radius: 1rem;
+      box-shadow: 0 8px 25px #0005;
+      color: var(--white);
+      margin-right: 30px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      width: 350px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transform: scale(0.95) rotateY(0deg);
+      transition: transform 0.4s cubic-bezier(.77,0,.175,1), box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--surface);
+    }
+    .cert-cell.is-selected {
+      transform: scale(1.08) rotateY(0deg);
+      box-shadow: 0 16px 40px #0008;
+      border: 2px solid var(--primary);
+      z-index: 2;
+    }
+    .cert-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--secondary);
+      margin-bottom: 0.5rem;
+      letter-spacing: 1px;
+    }
+    .cert-date {
+      font-size: 0.95rem;
+      color: var(--primaryLight);
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+    .cert-desc {
+      font-size: 1rem;
+      color: var(--textMuted);
+      font-weight: 400;
+    }
+    .cert-logo {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 1rem;
+      border-radius: 50%;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px #0002;
+    }
+    .cert-logo img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+    form {
+      background-color: var(--surface);
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #0003;
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    label {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primaryLight);
+      text-align: left;
+      letter-spacing: 1px;
+    }
+    input, textarea {
+      padding: 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--primaryLight);
+      font-size: 1rem;
+      background: var(--bgDarker);
+      color: var(--white);
+      resize: none;
+      width: 100%;
+    }
+    textarea { min-height: 150px; }
+    input:focus, textarea:focus {
+      outline: none;
+      border: 1.5px solid var(--primary);
+      box-shadow: 0 0 5px var(--primary);
+    }
+    button {
+      background: var(--primary);
+      color: var(--white);
+      font-size: 1.125rem;
+      font-weight: 800;
+      padding: 1rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+      letter-spacing: 1px;
+    }
+    button:hover {
+      background: var(--secondary);
+      color: var(--primary);
+      transform: translateY(-3px);
+    }
+    button:active { transform: translateY(1px); }
+    button:disabled {
+      background: rgba(255, 255, 255, 0.3);
+      cursor: not-allowed;
+    }
+    @media (max-width: 900px) {
+      .card, .cert-cell { width: 95vw; }
+      .carousel-cell { width: 95vw; }
+      .cert-carousel { max-width: 99vw; }
+      .card-container { flex-direction: column; gap: 2rem; }
+    }
+    @media (max-width: 600px) {
+      .section { padding: 2rem 0.5rem; }
+      .card, .cert-cell { width: 98vw; }
+      .carousel-cell { width: 98vw; }
+      .cert-carousel { max-width: 100vw; }
+      .skills-list { gap: 0.7rem; }
+      #sidebar { width: 90vw; left: -90vw; }
+      #sidebar.open { left: 0; }
+      .hero-title { font-size: 2.1rem; }
+      .auto-typed { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar + Menu -->
+  <div id="sidebar">
+    <div class="sidebar-title">Portfolio</div>
+    <a class="active" href="#Home">Home</a>
+    <a href="#About">About</a>
+    <a href="#Projects">Projects</a>
+    <a href="#Skills">Skills</a>
+    <a href="#Certificates">Certificates</a>
+    <a href="#Contact">Contact</a>
+  </div>
+  <div id="hamburger" onclick="hamburger()">☰</div>
+  <!-- Hero Section -->
+  <section id="hero-1785" class="section">
+    <div class="canvas-wrapper">
+      <canvas id="c"></canvas>
+    </div>
+    <div class="section" id="Home">
+      <div class="cs-container">
+        <svg id="dh-logo" class="logo" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg" style="width:120px;height:60px;display:block;margin:0 auto 1.5rem;">
+          <defs>
+            <linearGradient id="grad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#4f46e5" />
+              <stop offset="100%" stop-color="#fbbf24" />
+            </linearGradient>
+            <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="4" dy="4" stdDeviation="3" flood-color="black"/>
+            </filter>
+          </defs>
+          <text id="dh-text" x="50%" y="50%" font-size="60" font-family="Arial" fill="none" stroke="url(#grad)" stroke-width="4" text-anchor="middle" alignment-baseline="middle" filter="url(#shadow)" stroke-dasharray="0, 200" stroke-dashoffset="0">
+            DH
+            <animate id="dh-anim" attributeName="stroke-dasharray" from="0, 200" to="200, 0" dur="2s" repeatCount="indefinite" begin="indefinite"/>
+          </text>
+        </svg>
+        <div class="hero-title">Creative Developer Portfolio</div>
+        <span class="auto-typed"></span>
+        <p class="hero-desc">Welcome! Explore a showcase of web projects, games, and creative coding. Passionate about building interactive, beautiful, and functional digital experiences.</p>
+      </div>
+    </div>
+  </section>
+  <!-- About Section -->
+  <section id="About" class="section">
+    <div class="about-bg">
+      <svg viewBox="0 0 900 600" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="900" height="600" fill="#23243a"/>
+        <g fill="#fbbf24">
+          <circle r="147" cx="361" cy="278"/>
+          <circle r="65" cx="688" cy="201"/>
+          <circle r="103" cx="8" cy="576"/>
+        </g>
+      </svg>
+    </div>
+    <div class="card-container">
+      <div class="card">
+        <div class="card-front">
+          <div class="img-area"><div class="inner-area"></div></div>
+          <div class="name">Web Creator</div>
+          <div class="about"><h3>Design & Code</h3></div>
+        </div>
+        <div class="card-back">
+          <div class="back-content">
+            <p>Self-taught coder with a passion for building interactive websites and games. Always exploring new technologies and creative solutions.</p>
+          </div>
+        </div>
+      </div>
+      <div style="max-width:400px;">
+        <h3 style="color:var(--primaryLight);margin-bottom:0.5rem;font-weight:800;">About</h3>
+        <p style="color:var(--white);font-size:1.15rem;font-weight:600;">
+          Driven by curiosity and creativity, I enjoy turning ideas into digital reality. My journey is all about learning, experimenting, and sharing projects with the world.
+        </p>
+      </div>
+    </div>
+  </section>
+  <!-- Projects Section -->
+  <section id="Projects" class="section">
+    <h2>Projects</h2>
+    <div class="carousel" data-flickity='{ "wrapAround": true, "autoPlay": 3000 }'>
+      <div class="carousel-cell">
+        <b>Personal Portfolio</b><br>
+        <span style="font-size:1.1rem;color:var(--white);font-weight:600;">A modern, responsive portfolio website built with HTML, CSS, and JavaScript.</span>
+      </div>
+      <div class="carousel-cell">
+        <b>Pocket Money Tracker (App)</b><br>
+        <span style="font-size:1.1rem;color:var(--white);font-weight:600;">A mobile app to help kids manage their pocket money and savings.</span>
+      </div>
+      <div class="carousel-cell">
+        <b>Face Tracker for Tello Drone</b><br>
+        <span style="font-size:1.1rem;color:var(--white);font-weight:600;">A Python project that uses computer vision to track faces and control a Tello drone in real time.</span>
+      </div>
+    </div>
+  </section>
+  <!-- Skills Section -->
+  <section id="Skills" class="section">
+    <h2>Skills</h2>
+    <div class="skills-list">
+      <div class="skill-item">HTML5</div>
+      <div class="skill-item">CSS3</div>
+      <div class="skill-item">JavaScript</div>
+      <div class="skill-item">Python</div>
+      <div class="skill-item">Game Development</div>
+      <div class="skill-item">Web Design</div>
+      <div class="skill-item">UI/UX</div>
+      <div class="skill-item">Git & GitHub</div>
+      <div class="skill-item">APIs</div>
+      <div class="skill-item">Figma</div>
+    </div>
+  </section>
+  <!-- Certificates Section -->
+  <section id="Certificates" class="section">
+    <h2>Certificates</h2>
+    <div class="cert-carousel" data-flickity='{ "wrapAround": true, "autoPlay": 3500, "pageDots": true, "cellAlign": "center" }'>
+      <div class="cert-cell">
+        <div class="cert-logo">
+          <img src="https://api.sololearn.com/Uploads/Avatars/sololearn.png" alt="SoloLearn Logo">
+        </div>
+        <div class="cert-title">Python for Beginners</div>
+        <div class="cert-date">SoloLearn · Jan 2024</div>
+        <div class="cert-desc">Completed the SoloLearn Python for Beginners course, covering variables, loops, functions, and more.</div>
+      </div>
+      <div class="cert-cell">
+        <div class="cert-logo">
+          <img src="https://api.sololearn.com/Uploads/Avatars/sololearn.png" alt="SoloLearn Logo">
+        </div>
+        <div class="cert-title">Responsive Web Design</div>
+        <div class="cert-date">SoloLearn · Feb 2024</div>
+        <div class="cert-desc">Learned to build responsive websites using HTML5, CSS3, and modern design principles on SoloLearn.</div>
+      </div>
+      <div class="cert-cell">
+        <div class="cert-logo">
+          <img src="https://api.sololearn.com/Uploads/Avatars/sololearn.png" alt="SoloLearn Logo">
+        </div>
+        <div class="cert-title">JavaScript Essentials</div>
+        <div class="cert-date">SoloLearn · Mar 2024</div>
+        <div class="cert-desc">Mastered the fundamentals of JavaScript, DOM manipulation, and interactive web apps on SoloLearn.</div>
+      </div>
+      <div class="cert-cell">
+        <div class="cert-logo">
+          <img src="https://api.sololearn.com/Uploads/Avatars/sololearn.png" alt="SoloLearn Logo">
+        </div>
+        <div class="cert-title">Game Development with Python</div>
+        <div class="cert-date">SoloLearn · Apr 2024</div>
+        <div class="cert-desc">Built several games using Python, learning about game loops, sprites, and logic on SoloLearn.</div>
+      </div>
+    </div>
+  </section>
+  <!-- Contact Section -->
+  <section id="Contact" class="section">
+    <h2>Contact</h2>
+    <p>Have a question or want to connect? Drop a message below!</p>
+    <form action="https://formspree.io/f/xovezdzq" method="POST">
+      <div class="form-group">
+        <label for="name">Your Name:</label>
+        <input type="text" id="name" name="name" placeholder="Enter your full name" required />
+      </div>
+      <div class="form-group">
+        <label for="email">Your Email:</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required />
+      </div>
+      <div class="form-group">
+        <label for="subject">Subject:</label>
+        <input type="text" id="subject" name="subject" placeholder="Enter the subject of your message" required />
+      </div>
+      <div class="form-group">
+        <label for="message">Your Message:</label>
+        <textarea id="message" name="message" placeholder="Write your message here..." required></textarea>
+      </div>
+      <button type="submit" class="btn-submit">Send Message</button>
+    </form>
+  </section>
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+  <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Typed.js
+      new Typed(".auto-typed", {
+        strings: ["Web Developer", "Game Creator", "UI/UX Enthusiast", "Creative Coder"],
+        typeSpeed: 100,
+        backSpeed: 50,
+        backDelay: 2000,
+        loop: true,
+      });
+      // Matrix Canvas
+      const c = document.getElementById("c");
+      const ctx = c.getContext("2d");
+      function resizeCanvas() {
+        c.width = window.innerWidth;
+        c.height = window.innerHeight;
+      }
+      resizeCanvas();
+      const fontSize = 28; // larger for visibility
+      let columns = Math.floor(c.width / fontSize);
+      const codeLines = ["let", "a", "=", "5", ";", "if", "(", "x", ">", "10", ")", "{", "console", "log", "(", ")", "}", "else", "{", ">>>", "false;", "}"];
+      let drops = Array.from({ length: columns }, () => ({
+        char: codeLines[Math.floor(Math.random() * codeLines.length)],
+        y: Math.random() * c.height,
+      }));
+      function draw() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.18)";
+        ctx.fillRect(0, 0, c.width, c.height);
+        ctx.fillStyle = "rgba(120, 255, 120, 0.95)"; // bright green, high opacity
+        ctx.font = fontSize + "px monospace";
+        drops.forEach((drop, i) => {
+          ctx.fillText(drop.char, i * fontSize, drop.y);
+          if (drop.y > c.height) {
+            drop.y = 0;
+            drop.char = codeLines[Math.floor(Math.random() * codeLines.length)];
+          }
+          drop.y += fontSize;
+        });
+      }
+      setInterval(draw, 33);
+      window.addEventListener("resize", () => {
+        resizeCanvas();
+        columns = Math.floor(c.width / fontSize);
+        drops = Array.from({ length: columns }, () => ({
+          char: codeLines[Math.floor(Math.random() * codeLines.length)],
+          y: Math.random() * c.height,
+        }));
+      });
+      // Sidebar active link
+      document.querySelectorAll('#sidebar a').forEach(link => {
+        link.addEventListener('click', function() {
+          document.querySelectorAll('#sidebar a').forEach(l => l.classList.remove('active'));
+          this.classList.add('active');
+          document.getElementById('sidebar').classList.remove('open');
+        });
+      });
+
+      // DH Animation on View
+      const dhLogo = document.getElementById('dh-logo');
+      const dhAnim = document.getElementById('dh-anim');
+      let dhPlayed = false;
+      if (dhLogo && dhAnim) {
+        const observer = new window.IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting && !dhPlayed) {
+              dhAnim.beginElement();
+              dhPlayed = true;
+            }
+          });
+        }, { threshold: 0.5 });
+        observer.observe(dhLogo);
+      }
+    });
+    // Hamburger menu
+    function hamburger() {
+      const menu = document.getElementById("sidebar");
+      const icon = document.getElementById("hamburger");
+      if (menu.classList.contains("open")) {
+        menu.classList.remove("open");
+        icon.classList.remove("open");
+      } else {
+        menu.classList.add("open");
+        icon.classList.add("open");
+      }
+    }
+  </script>
+</body>
+</html>
